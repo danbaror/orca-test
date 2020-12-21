@@ -1,0 +1,19 @@
+version: '3'
+services:
+  orca:
+    build: .
+    links:
+      - pg
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+  pg:
+    image: orca-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${DATABASE_PASS}
+#   volumes:
+#     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
