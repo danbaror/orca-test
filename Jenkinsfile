@@ -62,7 +62,7 @@ pipeline
                  if ( params.PUSH_TO == 'Dockerhub' ) {
                     // Push the Docker image to Dockerhub
                     docker.withRegistry(DOCKERHUB_URL, 'Dockerhub') {
-                    IMAGE = 'danbaror/' + "$PROJECT" + params.TAG
+                    IMAGE = 'danbaror/' + "$PROJECT:" + params.TAG
                     // docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
                        docker.image(IMAGE).push()
                     } 
