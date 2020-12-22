@@ -43,28 +43,28 @@ pipeline
         {
             steps
             {
-                script
-                {
-                    // Build the docker image using a Dockerfile
-                    docker.build("$IMAGE","app")
-                }
+                script {
+                   if ( params.PUSH_TO == 'Dockerhub' ) {
+                      IMAGE = "$REPO:" + params.TAG
+                   } 
+                   docker.build("$IMAGE","app")
+               }
             }
         }
+
         stage('Push to ECR/Dockerhub') {
            steps {
               script {
                  if ( params.PUSH_TO == 'ECR' ) {
                     // Push the Docker image to ECR
                     docker.withRegistry(ECRURL, ECRCRED) {
-                       docker.image(IMAGE).push()
+                       def app = docker.image(IMAGE).push()
                     }
                  }
                  if ( params.PUSH_TO == 'Dockerhub' ) {
                     // Push the Docker image to Dockerhub
                     docker.withRegistry(DOCKERHUB_URL, 'Dockerhub') {
-                       IMAGE = 'danbaror/orca-app:'  + params.TAG
-                       def app = docker.build("danbaror/orca-app:${params.TAG}", './app').push()
-                       // docker.image(IMAGE).push()
+                       def app = docker.image(IMAGE).push()
                     } 
                  }
               }
