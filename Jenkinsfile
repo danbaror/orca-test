@@ -62,9 +62,9 @@ pipeline
                  if ( params.PUSH_TO == 'Dockerhub' ) {
                     // Push the Docker image to Dockerhub
                     docker.withRegistry(DOCKERHUB_URL, 'Dockerhub') {
-                    IMAGE = 'danbaror/orca-app:'  + params.TAG
-                    // docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
-                       docker.image(IMAGE).push()
+                       IMAGE = 'danbaror/orca-app:'  + params.TAG
+                       def app = docker.build("danbaror/orca-app:${params.TAG}", './app').push()
+                       // docker.image(IMAGE).push()
                     } 
                  }
               }
