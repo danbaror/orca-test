@@ -7,7 +7,7 @@ pipeline
     agent any
     environment 
     {
-        VERSION = 'latest'
+        VERSION = params.Tag
         PROJECT = 'orca-test'
         IMAGE = 'orca-test:latest'
         ECRURL = 'http://565105851053.dkr.ecr.eu-central-1.amazonaws.com'
@@ -43,21 +43,18 @@ pipeline
                 }
             }
         }
-        stage('Docker push')
-        {
-            steps
-            {
-                script
-                {
-                    // login to ECR - for now it seems that that the ECR Jenkins plugin is not performing the login as expected. I hope it will in the future.
-                    // sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+        stage('Push to ECR') {
+           when { 
+              expression { param.PushDestination == "ECR" }
+              steps {
+                 script {
                     // Push the Docker image to ECR
-                    docker.withRegistry(ECRURL, ECRCRED)
-                    {
-                        docker.image(IMAGE).push()
+                    docker.withRegistry(ECRURL, ECRCRED) {
+                       docker.image(IMAGE).push()
                     }
-                }
-            }
+                 }
+              }
+           }
         }
     }
     
