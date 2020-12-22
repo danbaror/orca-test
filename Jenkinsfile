@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 pipeline {
 
    options {
@@ -9,8 +11,8 @@ pipeline {
       ECR_URL = '565105851053.dkr.ecr.eu-central-1.amazonaws.com/orca-test'
       ECR_CRED = 'aws:orca'
    }
+   @Field String commit_id = ''
    stages {
-      def commit_id
       stage('Preparation') {
          checkout scm
          sh "git rev-parse --short HEAD > .git/commit-id"                        
