@@ -11,16 +11,16 @@ node {
       sh "git rev-parse --short HEAD > .git/commit-id"                        
       commit_id = readFile('.git/commit-id').trim()
    }
-   stage('Dockerhub build/push') {
-      when {
-         expression { params.PushDestination == 'Dockerhub' }
-      }
-      steps {
-         docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
-            def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
-         }
-      }
-   }
+//   stage('Dockerhub build/push') {
+//      when {
+//         expression { params.PushDestination == 'Dockerhub' }
+//      }
+//      steps {
+//         docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
+//            def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
+//         }
+//      }
+//   }
    stage('ECR build/push') {
       when {
          expression { params.PushDestination == 'ECR' }
