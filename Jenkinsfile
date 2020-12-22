@@ -35,7 +35,8 @@ pipeline
                     VERSION = shortCommitHash
                     // set the build display name
                     currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
-                    IMAGE = "$PROJECT:$VERSION"
+                    // IMAGE = "$PROJECT:$VERSION"
+                    IMAGE = "$PROJECT:latest"
                 }
             }
         }

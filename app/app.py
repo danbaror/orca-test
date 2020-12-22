@@ -54,22 +54,26 @@ def index(_):
 def health():
     return json.dumps({"status": "HEALTHY", "count": AccessEntry.query.count()})
 
-
 @app.route("/_load")
 def check_load():
-      
-    # Get the load average over 
-    # the last 1, 5, and 15 minutes  
-    # using os.getloadavg() method 
-    load1, load5, load15 = os.getloadavg() 
-        
-    # Print the load average over 
-    # the last 1, 5, and 15 minutes  
-    print("Load average over the last 1 minute:", load1) 
-    print("Load average over the last 5 minute:", load5) 
-    print("Load average over the last 15 minute:", load15) 
 
-    return json.dumps({"Load Avg 1m": "Load Avg 5m", "Load Avg 5m": load1, load5, load15})
+    # Get the load average over the last 1, 5, and 15 minutes
+    # using os.getloadavg() method
+    load_avg1, load_avg5, load_avg15 = os.getloadavg()
+    # host = os.uname()[1]
+    # HTML String
+    html = """
+    <table border=1>
+        <tr>
+          <th>Load Average 1 min</th>
+          <th>Load Average 5 min</th>
+          <th>Load Average 15 min</th>
+        </tr><tr>
+    """
+    table_item = "<th>" + str(load_avg1) + "</th><th>" + str(load_avg5) \
+               + "</th><th>" + str(load_avg15) + "</th></tr></table>"
+    return html + table_item
+
 
 def main():
     app.run(debug=True)
