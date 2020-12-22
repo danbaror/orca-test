@@ -22,14 +22,14 @@ node {
 //      }
 //   }
    stage('ECR build/push') {
-      when {
-         expression { params.PushDestination == 'ECR' }
-      }
+      
       steps {
-         // sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
-         docker.withRegistry( ECR_URL, ECR_CRED) {
-            // Build the docker image using a Dockerfile
-            def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
+         if ( params.PushDestination == 'ECR' ) { 
+            // sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+            docker.withRegistry( ECR_URL, ECR_CRED) {
+               // Build the docker image using a Dockerfile
+               def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
+            }
          }
       }
    }
