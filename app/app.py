@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 import json
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -53,6 +54,22 @@ def index(_):
 def health():
     return json.dumps({"status": "HEALTHY", "count": AccessEntry.query.count()})
 
+
+@app.route("/_load")
+def check_load():
+      
+    # Get the load average over 
+    # the last 1, 5, and 15 minutes  
+    # using os.getloadavg() method 
+    load1, load5, load15 = os.getloadavg() 
+        
+    # Print the load average over 
+    # the last 1, 5, and 15 minutes  
+    print("Load average over the last 1 minute:", load1) 
+    print("Load average over the last 5 minute:", load5) 
+    print("Load average over the last 15 minute:", load15) 
+
+    return json.dumps({"Load Avg 1m": "Load Avg 5m", "Load Avg 5m": load1, load5, load15})
 
 def main():
     app.run(debug=True)
