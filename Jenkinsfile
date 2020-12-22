@@ -7,7 +7,7 @@ node {
    }
    stage('docker build/push') {
      docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
-       def app = docker.build("danbaror/orca-app:${commit_id}", '.').push()
+       def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
      }
    }
 }
