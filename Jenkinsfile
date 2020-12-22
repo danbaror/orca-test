@@ -4,10 +4,16 @@ pipeline
     {
         buildDiscarder(logRotator(numToKeepStr: '3'))
     }
+    parameters {
+        string(name: 'TAG', defaultValue: 'v01', description: 'Image Tag')
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy this image')
+        choice(name: 'PUSH_TO', choices: ['ECR', 'Dockerhub', 'All', 'None'], description: 'Push Image to Dockerhub or ECR')
+
+    }
     agent any
     environment 
     {
-        VERSION = params.Tag
+        VERSION = 'latest'
         PROJECT = 'orca-test'
         IMAGE = 'orca-test:latest'
         ECRURL = 'http://565105851053.dkr.ecr.eu-central-1.amazonaws.com'
@@ -45,7 +51,7 @@ pipeline
         }
         stage('Push to ECR') {
            when { 
-              expression { param.PushDestination == "ECR" }
+              expression { param.PUSH_TO == "ECR" }
               steps {
                  script {
                     // Push the Docker image to ECR
