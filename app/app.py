@@ -21,9 +21,6 @@ class AccessEntry(db.Model):
     path = db.Column(db.String(1024))
 
 
-db.drop_all()
-db.create_all()
-
 @app.errorhandler(404)
 def index(_):
     remote_addr = request.remote_addr
@@ -54,7 +51,7 @@ def index(_):
 def health():
     return json.dumps({"status": "HEALTHY", "count": AccessEntry.query.count()})
 
-@app.route("/load")
+@app.route("/_load")
 def check_load():
 
     # Get the load average over the last 1, 5, and 15 minutes
