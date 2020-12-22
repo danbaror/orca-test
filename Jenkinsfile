@@ -50,10 +50,9 @@ pipeline
             }
         }
         stage('Push to ECR') {
-           when { 
-              expression { params.PUSH_TO == "ECR" }
-              steps {
-                 script {
+           steps {
+              script {
+                 if ( params.PUSH_TO == 'ECR' ) {
                     // Push the Docker image to ECR
                     docker.withRegistry(ECRURL, ECRCRED) {
                        docker.image(IMAGE).push()
