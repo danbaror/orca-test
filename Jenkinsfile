@@ -49,7 +49,7 @@ pipeline
                 }
             }
         }
-        stage('Push to ECR') {
+        stage('Push to ECR/Dockerhub') {
            steps {
               script {
                  if ( params.PUSH_TO == 'ECR' ) {
@@ -57,6 +57,12 @@ pipeline
                     docker.withRegistry(ECRURL, ECRCRED) {
                        docker.image(IMAGE).push()
                     }
+                 }
+                 if ( params.PUSH_TO == 'Dockerhub' ) {
+                    // Push the Docker image to Dockerhub
+                    docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
+                       docker.image(IMAGE).push()
+                    } 
                  }
               }
            }
