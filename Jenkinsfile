@@ -10,7 +10,7 @@ pipeline
         VERSION = 'latest'
         PROJECT = 'orca-test'
         IMAGE = 'orca-test:latest'
-        ECRURL = '565105851053.dkr.ecr.eu-central-1.amazonaws.com/orca-test'
+        ECRURL = 'http://565105851053.dkr.ecr.eu-central-1.amazonaws.com'
         ECRCRED = 'ecr:eu-central-1:aws-orca'
     }
     stages
