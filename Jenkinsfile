@@ -17,6 +17,7 @@ pipeline
         PROJECT = 'orca-test'
         IMAGE = 'orca-test:latest'
         ECRURL = 'http://565105851053.dkr.ecr.eu-central-1.amazonaws.com'
+        DOCKERHUB_URL = 'https://index.docker.io/v1/danbaror'
         ECRCRED = 'ecr:eu-central-1:aws-orca'
     }
     stages
@@ -60,7 +61,8 @@ pipeline
                  }
                  if ( params.PUSH_TO == 'Dockerhub' ) {
                     // Push the Docker image to Dockerhub
-                    docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
+                    docker.withRegistry(DOCKERHUB_URL, 'Dockerhub') {
+                    // docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
                        docker.image(IMAGE).push()
                     } 
                  }
