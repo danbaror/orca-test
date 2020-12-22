@@ -1,38 +1,73 @@
-node {
-
-   environment {
-      IMAGE = 'orca-test:v05'
-      ECR_URL = '565105851053.dkr.ecr.eu-central-1.amazonaws.com/orca-test'
-      ECR_CRED = 'aws:orca'
-   }
-   def commit_id
-   stage('Preparation') {
-      checkout scm
-      sh "git rev-parse --short HEAD > .git/commit-id"                        
-      commit_id = readFile('.git/commit-id').trim()
-   }
-//   stage('Dockerhub build/push') {
-//      when {
-//         expression { params.PushDestination == 'Dockerhub' }
-//      }
-//      steps {
-//         docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub') {
-//            def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
-//         }
-//      }
-//   }
-   stage('ECR build/push') {
-      
-      steps {
-         if ( params.PushDestination == 'ECR' ) { 
-            // sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
-            docker.withRegistry( ECR_URL, ECR_CRED) {
-               // Build the docker image using a Dockerfile
-               def app = docker.build("danbaror/orca-app:${commit_id}", './app').push()
+pipeline
+{
+    options
+    {
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+    agent any
+    environment 
+    {
+        VERSION = 'latest'
+        PROJECT = 'orca-test'
+        IMAGE = 'orca-test:latest'
+        ECRURL = '565105851053.dkr.ecr.eu-central-1.amazonaws.com/orca-test'
+        ECRCRED = 'aws:orca'
+    }
+    stages
+    {
+        stage('Build preparations')
+        {
+            steps
+            {
+                script 
+                {
+                    // calculate GIT lastest commit short-hash
+                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    shortCommitHash = gitCommitHash.take(7)
+                    // calculate a sample version tag
+                    VERSION = shortCommitHash
+                    // set the build display name
+                    currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
+                    IMAGE = "$PROJECT:$VERSION"
+                }
             }
-         }
-      }
-   }
-   
-}
+        }
+        stage('Docker build')
+        {
+            steps
+            {
+                script
+                {
+                    // Build the docker image using a Dockerfile
+                    docker.build("$IMAGE","examples/pipelines/TAP_docker_image_build_push_ecr")
+                }
+            }
+        }
+        stage('Docker push')
+        {
+            steps
+            {
+                script
+                {
+                    // login to ECR - for now it seems that that the ECR Jenkins plugin is not performing the login as expected. I hope it will in the future.
+                    sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+                    // Push the Docker image to ECR
+                    docker.withRegistry(ECRURL, ECRCRED)
+                    {
+                        docker.image(IMAGE).push()
+                    }
+                }
+            }
+        }
+    }
+    
+    post
+    {
+        always
+        {
+            // make sure that the Docker image is removed
+            sh "docker rmi $IMAGE | true"
+        }
+    }
+} 
 
