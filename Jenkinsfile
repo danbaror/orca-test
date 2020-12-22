@@ -51,7 +51,7 @@ pipeline
         }
         stage('Push to ECR') {
            when { 
-              expression { param.PUSH_TO == "ECR" }
+              expression { params.PUSH_TO == "ECR" }
               steps {
                  script {
                     // Push the Docker image to ECR
