@@ -6,6 +6,6 @@ pipenv run flask db migrate
 pipenv run flask db upgrade
 
 # run the app
-exec pipenv run python app.py
+# exec pipenv run python app.py
 # run the app in wsgi
-# uwsgi --http 127.0.0.1:5000 --module myproject:app
+uwsgi --http 127.0.0.1:8000 --module myproject:app
