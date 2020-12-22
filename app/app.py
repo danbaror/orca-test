@@ -54,7 +54,7 @@ def index(_):
 def health():
     return json.dumps({"status": "HEALTHY", "count": AccessEntry.query.count()})
 
-@app.route("/_load")
+@app.route("/load")
 def check_load():
 
     # Get the load average over the last 1, 5, and 15 minutes
