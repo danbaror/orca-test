@@ -21,27 +21,6 @@ class AccessEntry(db.Model):
     path = db.Column(db.String(1024))
 
 
-@app.route("/load")
-def check_load():
-
-    # Get the load average over the last 1, 5, and 15 minutes
-    # using os.getloadavg() method
-    load_avg1, load_avg5, load_avg15 = os.getloadavg()
-    # host = os.uname()[1]
-    # HTML String
-    html = """
-    <table border=1>
-        <tr>
-          <th>Load Average 1 min</th>
-          <th>Load Average 5 min</th>
-          <th>Load Average 15 min</th>
-        </tr><tr>
-    """
-    table_item = "<th>" + str(load_avg1) + "</th><th>" + str(load_avg5) \
-               + "</th><th>" + str(load_avg15) + "</th></tr></table>"
-    return html + table_item
-
-
 @app.errorhandler(404)
 def index(_):
     remote_addr = request.remote_addr
@@ -71,6 +50,27 @@ def index(_):
 @app.route("/_healthz")
 def health():
     return json.dumps({"status": "HEALTHY", "count": AccessEntry.query.count()})
+
+
+@app.route("/load")
+def check_load():
+
+    # Get the load average over the last 1, 5, and 15 minutes
+    # using os.getloadavg() method
+    load_avg1, load_avg5, load_avg15 = os.getloadavg()
+    # host = os.uname()[1]
+    # HTML String
+    html = """
+    <table border=1>
+        <tr>
+          <th>Load Average 1 min</th>
+          <th>Load Average 5 min</th>
+          <th>Load Average 15 min</th>
+        </tr><tr>
+    """
+    table_item = "<th>" + str(load_avg1) + "</th><th>" + str(load_avg5) \
+               + "</th><th>" + str(load_avg15) + "</th></tr></table>"
+    return html + table_item
 
 
 def main():
